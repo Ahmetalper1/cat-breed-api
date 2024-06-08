@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Breed Classification</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Cat Breed Classification</h1>
+        <form id="upload-form" action="/predict" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" id="file-input" required>
+            <button type="submit">Upload</button>
+        </form>
+        <div id="result"></div>
+        <div id="image-preview"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        const resultDiv = document.getElementById('result');
+        const imagePreviewDiv = document.getElementById('image-preview');
+        const fileInput = document.getElementById('file-input');
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreviewDiv.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image" style="max-width: 400px; max-height: 400px;">`;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.error) {
+                resultDiv.textContent = 'Error: ' + result.error;
+            } else {
+                resultDiv.textContent = 'Breed: ' + result.breed;
+            }
+        });
+    </script>
+</body>
+</html>
