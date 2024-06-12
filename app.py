@@ -7,10 +7,16 @@ import os
 
 app = Flask(__name__)
 
+# Update the model path if necessary
 MODEL_PATH = 'C:/Users/HP/OneDrive/Masaüstü/Cat Breeds Classification/Data/models/20240608-150235/model-cat-vision-imagenet.keras'
 
 # Load the model
-model = load_model(MODEL_PATH)
+try:
+    model = load_model(MODEL_PATH)
+    print("Model loaded successfully.")
+except Exception as e:
+    print(f"Error loading model: {e}")
+
 
 # Define the cat breeds
 breeds = [
